@@ -42,31 +42,25 @@ module.exports = function(RED) {
       try {
         eventFile = require(this.file);
       } catch(err) {
-        console.log("falling back to empty array, as JSON not parseable");
+        console.log("[CachedEvents] falling back to empty array, as JSON not parseable");
       }
 
-      console.log("initting from:" + util.inspect(eventFile));
       var node      = this;
 
       var eventSet  = new DumbSet(eventFile, function(container, element) {
         return _.find(container, function(scannedElem) {
-          return _.isEqual(node.cloneEvent(scannedElem), node.cloneEvent(element));
-        }) === undefined;
+          return _.isEqual(this.cloneEvent(scannedElem), this.cloneEvent(element));
+        }, node) === undefined;
       });
 
-      console.log("events:" + util.inspect(eventSet.toArray()))
-      console.log("Received event:" + util.inspect(msg));
       if(eventSet.add(msg)) {
-        console.log("Added event")
         node.send(msg);
         fs.writeFile(this.file, JSON.stringify(eventSet.toArray()), (err) => {
           if(err) {
-            console.log("Error serializing event set");
+            console.log("[CachedEvents] Error serializing event set");
             console.log(err.toString());
           }
         })
-      } else {
-        console.log("Event " + util.inspect(msg) + " already exists");
       }
 
     });
