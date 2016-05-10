@@ -14,6 +14,10 @@ module.exports = function(RED) {
     })
   }
 
+  DumbSet.prototype.couldAdd = function(data) {
+    return this.addFunc(this.container, data);
+  }
+
   DumbSet.prototype.add = function(data) {
     if(this.addFunc(this.container, data)) {
       this.container.push(data);
