@@ -57,20 +57,24 @@ module.exports = function(RED) {
 
       var payloadableEvents = _.flatten(_.map(eventSet.toArray(), (e) => { return e.payload }));
 
-      if(eventSet.add(newEventToAdd)) {
+      if(eventSet.couldAdd(newEventToAdd)) {
         newEventToAdd.payload = _.filter(newEventToAdd.payload, (elem) => { 
           return !_.findWhere(payloadableEvents, elem) 
         });
 
-        if(newEventToAdd.payload.length > 0)
-          node.send(newEventToAdd);
-
-        fs.writeFile(this.file, JSON.stringify(eventSet.toArray()), (err) => {
-          if(err) {
-            console.log("[CachedEvents] Error serializing event set");
-            console.log(err.toString());
+        if(newEventToAdd.payload.length > 0) {
+          if(eventSet.add(newEventToAdd)) {
+            fs.writeFile(this.file, JSON.stringify(eventSet.toArray()), (err) => {
+              if(err) {   
+                console.log("[CachedEvents] Error serializing event set");
+                console.log(err.toString());
+              } else {
+                node.send(newEventToAdd);
+              }
+            })
           }
-        })
+        }
+  
       }
 
     });
