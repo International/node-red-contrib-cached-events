@@ -26,12 +26,6 @@ module.exports = function(RED) {
     return this.container;
   };
 
-  CachedEvents.prototype.cloneEvent = function(msg) {
-    var newObject = Object.assign({}, msg);
-    delete newObject._msgid;
-    return newObject;
-  }
-
   function CachedEvents(config) {
     RED.nodes.createNode(this,config);
     this.file = config.file;
@@ -49,12 +43,24 @@ module.exports = function(RED) {
 
       var eventSet  = new DumbSet(eventFile, function(container, element) {
         return _.find(container, function(scannedElem) {
-          return _.isEqual(this.cloneEvent(scannedElem), this.cloneEvent(element));
+          return _.isEqual(scannedElem, element)
         }, node) === undefined;
       });
 
-      if(eventSet.add(msg)) {
-        node.send(msg);
+      var newEventToAdd = {
+        payload: msg.payload
+      }
+
+      var payloadableEvents = _.flatten(_.map(eventSet.toArray(), (e) => { return e.payload }));
+
+      if(eventSet.add(newEventToAdd)) {
+
+        newEventToAdd.payload = _.filter(newEventToAdd.payload, (elem) => { 
+          return !_.findWhere(payloadableEvents, elem) 
+        });
+
+        node.send(newEventToAdd);
+
         fs.writeFile(this.file, JSON.stringify(eventSet.toArray()), (err) => {
           if(err) {
             console.log("[CachedEvents] Error serializing event set");
