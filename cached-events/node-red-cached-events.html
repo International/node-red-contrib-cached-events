@@ -23,6 +23,6 @@
 </script>
 
 <script type="text/x-red" data-help-name="cached-events">
-    <p>Simple node that watches a folder, and sends events when files are added/created/changed/deleted. </p>
-    <p>The events send will contain the following fields in <b>payload</b>:<code>changeType</code> and <code>filePath</code></p>
+    <p>Simple node that maintains a list of events, and only emits the event if the node is not already in the collection </p>
+    <p>The node uses a file where it serializes the events as JSON</p>
 </script>
