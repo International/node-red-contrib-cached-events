@@ -1,21 +1,25 @@
 {
-    "name": "node-red-contrib-cached-events",
-    "version": "0.0.1",
-    "description": "Cache events in file, and trigger only new ones",
-    "dependencies": {
-    },
-    "node-red" : {
-        "nodes": {
-            "cached-events": "cached-events/node-red-cached-events.js"
-        }
-    },
-    "keywords": [
-        "node-red", "events", "cache"
-    ],
-    "repository" : {
-      "type" : "git",
-      "url" : "https://github.com/International/node-red-contrib-cached-events",
-    },
-    "author": "George Opritescu",
-    "license": "MIT"
+  "name": "node-red-contrib-cached-events",
+  "version": "0.0.1",
+  "description": "Cache events in file, and trigger only new ones",
+  "dependencies": {
+    "collections": "^3.0.0",
+    "underscore": "^1.8.3"
+  },
+  "node-red": {
+    "nodes": {
+      "cached-events": "cached-events/node-red-cached-events.js"
+    }
+  },
+  "keywords": [
+    "node-red",
+    "events",
+    "cache"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/International/node-red-contrib-cached-events"
+  },
+  "author": "George Opritescu",
+  "license": "MIT"
 }
