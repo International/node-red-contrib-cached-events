@@ -34,7 +34,7 @@ module.exports = function(RED) {
       var eventFile = [];
 
       try {
-        eventFile = require(this.file);
+        eventFile = JSON.parse(fs.readFileSync(this.file));
       } catch(err) {
         console.log("[CachedEvents] falling back to empty array, as JSON not parseable");
       }
@@ -54,12 +54,12 @@ module.exports = function(RED) {
       var payloadableEvents = _.flatten(_.map(eventSet.toArray(), (e) => { return e.payload }));
 
       if(eventSet.add(newEventToAdd)) {
-
         newEventToAdd.payload = _.filter(newEventToAdd.payload, (elem) => { 
           return !_.findWhere(payloadableEvents, elem) 
         });
 
-        node.send(newEventToAdd);
+        if(newEventToAdd.payload.length > 0)
+          node.send(newEventToAdd);
 
         fs.writeFile(this.file, JSON.stringify(eventSet.toArray()), (err) => {
           if(err) {
